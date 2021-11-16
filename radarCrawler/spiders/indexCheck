@@ -18,4 +18,4 @@ class RadarSpider(scrapy.Spider):
         yield {
             "url": main_url,
             "indexacao": response.json()['searchInformation']['totalResults']
-        }
+        }  
