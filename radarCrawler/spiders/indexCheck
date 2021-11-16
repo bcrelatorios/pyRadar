@@ -1,0 +1,21 @@
+import scrapy
+import csv
+import requests
+
+class RadarSpider(scrapy.Spider):
+    name = 'indexCheck'
+    start_urls = []
+    r = requests.get('https://docs.google.com/spreadsheets/d/e/2PACX-1vSgpi7PovoovcZL28XpERljhBfOR_DFLlGNzwvlr2DyDn8-sBw9qvpfeh954TOm0eDZqBU_r8O0Bp5o/pub?gid=0&single=true&output=csv').text
+    start_urls = r.split('\n')
+    
+    
+    def start_requests(self):
+        for u in self.start_urls:
+            yield scrapy.Request(f'https://www.googleapis.com/customsearch/v1?key=AIzaSyB25cXae4YvyxmMyoYbnerT3X5lHypUCnE&cx=e7532fe54190740a5&q=site:{u}', callback=self.parse, cb_kwargs=dict(main_url=u))
+
+    def parse(self, response, main_url):
+        
+        yield {
+            "url": main_url,
+            "indexacao": response.json()['searchInformation']['totalResults']
+        }
